@@ -28,18 +28,18 @@
           <div class="change" @click="changeQuestion">换一张</div>
           <div class="clearfix"></div>
         </div>
-        <div class="answer" v-bind:class="[select==0 ? 'check' : 'not-check']" @click="select=0">{{ question.as[0] }}</div>
-        <div class="answer" v-bind:class="[select==1 ? 'check' : 'not-check']" @click="select=1">{{ question.as[1] }}</div>
+        <div v-bind:class="[select==0 ? 'check' : 'not-check', 'answer']" @click="select=0">{{ question.as[0] }}</div>
+        <div v-bind:class="[select==1 ? 'check' : 'not-check', 'answer']" @click="select=1">{{ question.as[1] }}</div>
         <div class="btn-container" v-if="questions.length < questionLength - 1">
-          <img v-if="select === -1" class="next-btn" @click="page=2" src="../assets/next_disabled.png">
+          <img v-if="select === -1" class="next-btn" src="../assets/next_disabled.png">
           <transition name="real-next">
             <img v-if="select !== -1" class="next-btn" @click="nextQuestion" src="../assets/next.png">
           </transition>
         </div>
         <div class="btn-container" v-else>
-          <img v-if="select == -1" class="next-btn" @click="done" src="../assets/done_disabled.png">
+          <img v-if="select == -1" class="next-btn" src="../assets/done_disabled.png">
           <transition name="real-next">
-            <img v-if="select !== -1" class="next-btn" @click="done" src="../assets/done_btn.png">
+            <img v-if="select !== -1" class="next-btn" v-bind:class="submited ? 'real-next-enter-active' : ''" @click="done" src="../assets/done_btn.png">
           </transition>
         </div>
         <div class="container-bottom">
@@ -62,12 +62,17 @@ export default {
       questionIndex: 0,
       select: -1,
       questions: [],
-      questionLength: 5
+      questionLength: 5,
+      ref: null,
+      submited: false
     }
   },
   created () {
     console.log(data.length)
     this.changeQuestion()
+    // console.log(this.wilddogData)
+    console.log(this.$root.$wilddogRefs.ref)
+    // this.$root.$bindAsArray('test', this.$root.wilddogRef.child('ttt'))
   },
   methods: {
     changeQuestion () {
@@ -91,13 +96,28 @@ export default {
         index: this.questionIndex,
         answer: this.select
       })
+      // this.wilddogData.push({
+      //   name: '朝润',
+      //   value: 'no'
+      // })
       this.changeQuestion()
+      // console.log(this.$root.items)
+      // console.log(this.$root.test)
+      // console.log(this.$root)
     },
     done () {
       this.questions.push({
         index: this.questionIndex,
         answer: this.select
       })
+      this.submited = true
+      // this.$root.$wilddogRefs.ref.push({
+      //   name: '何朝润',
+      //   answer: this.questions
+      // }).then(function (newRef) {
+      //   console.log(newRef.path.A[1])
+      //   console.info(newRef.toString())
+      // })
       console.log('done!')
     }
   },
@@ -109,7 +129,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .page {
   width: 100%;
   height: 100%;
