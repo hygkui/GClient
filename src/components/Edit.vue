@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <!--page1-->
+    <!--首页-->
     <div v-if="page===1" class="page1">
       <img class="full-width-img" src="../assets/index.png">
       <div class="face-container">
@@ -11,9 +11,12 @@
         <img class="btn" @click="page=2" src="../assets/set_title_btn.png">
       </div>
     </div>
-    <!--page2-->
+    <!--选择题目和答案页-->
     <div v-if="page===2" class="page2">
-      <img class="full-width-img" src="../assets/edit_top.png">
+      <div class="top-bar">
+        <img v-if="questions.length >= questionLength - 1 && select != -1" src="../assets/wait_top.png">
+        <img v-else src="../assets/edit_top.png">
+      </div>
       <div class="full-width-img title_bg"></div>
       <img class="full-width-img title_bg" src="../assets/title_bg.png">
       <div class="container">
@@ -27,10 +30,20 @@
         </div>
         <div class="answer" v-bind:class="[select==0 ? 'check' : 'not-check']" @click="select=0">{{ question.as[0] }}</div>
         <div class="answer" v-bind:class="[select==1 ? 'check' : 'not-check']" @click="select=1">{{ question.as[1] }}</div>
-        <img v-if="select == -1" class="btn next-btn" @click="page=2" src="../assets/next_disabled.png">
-        <img v-else class="next-btn" @click="nextQuestion" src="../assets/next.png">
+        <div class="btn-container" v-if="questions.length < questionLength - 1">
+          <img v-if="select === -1" class="next-btn" @click="page=2" src="../assets/next_disabled.png">
+          <transition name="real-next">
+            <img v-if="select !== -1" class="next-btn" @click="nextQuestion" src="../assets/next.png">
+          </transition>
+        </div>
+        <div class="btn-container" v-else>
+          <img v-if="select == -1" class="next-btn" @click="done" src="../assets/done_disabled.png">
+          <transition name="real-next">
+            <img v-if="select !== -1" class="next-btn" @click="done" src="../assets/done_btn.png">
+          </transition>
+        </div>
         <div class="container-bottom">
-          <span>第{{ questions.length + 1 }}题/共5题</span>
+          <span>第{{ questions.length + 1 }}题/共{{ questionLength }}题</span>
         </div>
       </div>
     </div>
@@ -48,7 +61,8 @@ export default {
       data: data,
       questionIndex: 0,
       select: -1,
-      questions: []
+      questions: [],
+      questionLength: 5
     }
   },
   created () {
@@ -78,6 +92,13 @@ export default {
         answer: this.select
       })
       this.changeQuestion()
+    },
+    done () {
+      this.questions.push({
+        index: this.questionIndex,
+        answer: this.select
+      })
+      console.log('done!')
     }
   },
   computed: {
@@ -131,6 +152,16 @@ export default {
 }
 .title_bg {
   margin-top: 1.4rem;
+}
+.top-bar {
+  width: 100%;
+  /*background: #f00;*/
+  padding: .2rem 0;
+}
+.top-bar img {
+  display: block;
+  width: 90%;
+  margin: 0 auto;
 }
 .container {
   /*background-color: rgba(216, 194, 194, 0.65);*/
@@ -191,13 +222,51 @@ export default {
   display: inline-block;
   margin-right: .1rem;
 }
+.btn-container {
+  width: 100%;
+  /*background: #f00;*/
+  position: absolute;
+  left: 0;
+  top: 7.2rem;
+}
 .next-btn {
   width: 45%;
-  position: absolute;
+  margin: 0 auto;
+  display: block;
+  /*position: absolute;*/
   /*bottom: .3rem;*/
-  top: 7.2rem;
-  left: 50%;
-  transform: translate(-50%, 0);
+  /*top: 7.2rem;*/
+  /*left: 50%;*/
+  /*transform: translate(-50%, 0);*/
+}
+.real-next-enter-active {
+  animation: scale-in .8s;
+}
+.real-next-leave-active {
+  animation: all .5s;
+  opacity: 0;
+}
+@keyframes scale-in {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes fade-out {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 .container-bottom {
   color: #b46e53;
