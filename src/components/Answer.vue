@@ -1,13 +1,15 @@
 <template>
   <div class="page">
-    <div class="talk" @click="test">
+    <div class="talk">
       <!--聊天界面-->
       <transition-group v-on:enter="scrollBottom" name="chat-list">
-        <div v-for="(message, index) in conversation" v-bind:key="index">
+        <div v-for="(message, index) in conversation" :key="index">
           <!--对方文字消息-->
-          <div v-if="message.type === 'other'" v-bind:class="message.text === conversation[conversation.length - 1].text && (nextStep === 'answer' || nextStep === 'additionA') ? 'now' : ''" class="row other">
+          <div v-if="message.type === 'other'" :class="message.text === conversation[conversation.length - 1].text && (nextStep === 'answer' || nextStep === 'additionA') ? 'now' : ''" class="row other">
             <div class="avatar">
-              <img class="full-width-img" src="../assets/other.jpg">
+              <img v-if="questionId.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
+              <img v-else-if="questionId.indexOf('靖娴') > -1 || questionId.indexOf('小宝宝') > -1" src="../assets/me.jpg">
+              <img v-else class="full-width-img" src="../assets/logo.png">
             </div>
             <div class="box"><em></em><span></span>{{ message.text }}</div>
             <div class="clearfix"></div>
@@ -25,7 +27,9 @@
           <!--质检报告-->
           <div v-if="message.type === 'res'" class="row other">
             <div class="avatar">
-              <img class="full-width-img" src="../assets/other.jpg">
+              <img v-if="questionId.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
+              <img v-else-if="questionId.indexOf('靖娴') > -1 || questionId.indexOf('小宝宝') > -1" src="../assets/me.jpg">
+              <img v-else class="full-width-img" src="../assets/logo.png">
             </div>
             <div class="report">
               <img class="full-width-img" @click="seeReport" src="../assets/result.jpg">
@@ -40,7 +44,9 @@
           <!--我的文字消息-->
           <div v-if="message.type === 'me'" class="row me">
             <div class="avatar">
-              <img class="full-width-img" src="../assets/me.jpg">
+              <img v-if="answerer.indexOf('靖娴') > -1 || answerer.indexOf('小宝宝') > -1" class="full-width-img" src="../assets/me.jpg">
+              <img v-else-if="answerer.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
+              <img v-else class="full-width-img" src="../assets/logo.png">
             </div>
             <img v-if="message.text === 'true'" class="response" src="../assets/true.jpg">
             <img v-else class="response" src="../assets/false.jpg">
@@ -49,7 +55,9 @@
           <!--我的文字消息-->
           <div v-if="message.type === 'my-text'" class="row me my-text">
             <div class="avatar">
-              <img class="full-width-img" src="../assets/me.jpg">
+              <img v-if="answerer.indexOf('靖娴') > -1 || answerer.indexOf('小宝宝') > -1" class="full-width-img" src="../assets/me.jpg">
+              <img v-else-if="answerer.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
+              <img v-else class="full-width-img" src="../assets/logo.png">
             </div>
             <div class="box"><em></em><span></span>{{ message.text }}</div>
             <div class="clearfix"></div>
@@ -61,7 +69,7 @@
     </div>
     <!--一开始输入姓名-->
     <div v-if="!started" class="input-box">
-      <input placeholder="请输入姓名" type="text" v-model="answerer">
+      <input @keyup.enter="sendName" id="name-input" placeholder="请输入姓名" type="text" v-model="answerer">
       <button :disabled="!this.answerer.length" @click="sendName">发送</button>
     </div>
     <!--显示对方姓名-->
@@ -91,11 +99,8 @@ export default {
       start: { title: ',你是最了解我的人', true: '嘻嘻，我还有五句话，全部猜对真假才是真的了解我哦！', false: '那让我们加深一下了解吧！我说五句话，你来判断真假~' },
       right: [ '猜对了，再接再厉！', '又对了,还是你了解我', '对对对,快承认你暗恋我吧', '骗不了你！大神受我一拜！', '真心人,我们之间只差一纸结婚证了' ],
       wrong: [ '答错了哦，再接再厉！', 'Opps，又错了哦,有点尴尬了', '又错了哦…,我已安装手机管家,准备屏蔽你的电话', '还错？万一有天我被盗号了…,你还是下载个管家吧', '你已被移出好友列表' ],
-      addition: ['这都被你发现了', '厉害了,这你都知道', '这么了解我,除了我家宝宝还能有谁'],
-      result: { 0: '请问，你贵姓？', 20: '交了个假朋友', 40: '我们之间隔了一道墙', 60: '多发两个红包加强沟通吧', 80: '好基友一辈纸', 100: '高山流水遇知音' },
-      allQuestions: this.$root.ref,
+      addition: ['这都被你发现了', '厉害了,这你都知道', '这么了解我,真不愧是我家小宝宝'],
       data: data,
-      key: '-Kf_bceDm5iEUrd69PGT',
       questions: [],
       answerer: '',
       conversation: [],
@@ -106,29 +111,49 @@ export default {
       rightAnswer: null,
       showQuestionIndex: null,
       started: false,
-      finish: false
+      finish: false,
+      questionId: null,
+      allAnswerIds: []
     }
   },
   created () {
+    const name = this.$route.params.name
+    const time = this.$route.params.time
+    const username = localStorage.getItem('username')
+    this.questionId = name + time
+    if (username && name === username) { // 如果是本人,跳转到结果页面
+      this.$router.replace({name: 'result', params: {name, time}})
+    } else if (username) {
+      let allAnswerIds = localStorage.getItem('allAnswerIds')
+      if (allAnswerIds) {
+        this.allAnswerIds = JSON.parse(allAnswerIds)
+        let hasAnswered = this.allAnswerIds.some((answer) => {
+          return answer === this.questionId
+        })
+        if (hasAnswered) { // 如果已回答过,跳转到结果页面
+          this.$router.replace({name: 'result', params: {name, time}})
+        }
+      }
+      window.setTimeout(() => {
+        this.answerer = username
+        this.sendName()
+      }, 500)
+    }
+    window.scroll(0, 0)
+    // document.title = this.title.title
     this.conversation.push({
       type: 'other',
       text: '你叫什么名字呢?'
     })
   },
+  mounted () {
+    const username = localStorage.getItem('username')
+    if (!username) {
+      const input = document.getElementById('name-input')
+      input.focus()
+    }
+  },
   methods: {
-    // 获取问题
-    getQuestions () {
-      // console.log(this.$root.allQuestions)
-      // console.log(this.allQuestions)
-      for (const question of this.allQuestions) {
-        const key = question['.key']
-        if (key === this.key) {
-          this.questions = question
-          // console.log(this.questions)
-        }
-      }
-      // console.log(this.$root.wilddogData)
-    },
     // 选择假
     sayNo () {
       this.conversation.push({
@@ -177,6 +202,12 @@ export default {
           this.checkAdt()
           break
         case 'finish':
+          this.allAnswerIds.push(this.questionId)
+          localStorage.setItem('allAnswerIds', JSON.stringify(this.allAnswerIds))
+          this.serverData.child('results').push({
+            answerer: this.answerer,
+            score: this.score
+          })
           window.setTimeout(() => { this.showTip() }, 1000)
           break
       }
@@ -227,16 +258,13 @@ export default {
         type: 'other',
         text: this.data[this.question.answer[this.hasAnswered]['index']].as[this.showQuestionIndex]
       })
-      // console.log(this.data[this.question.answer[this.hasAnswered]['index']].as[this.question.answer[this.hasAnswered].answer])
       this.rightAnswer = this.question.answer[this.hasAnswered]['answer']
       this.canSelect = true
       this.nextStep = 'answer'
     },
     // 问附加问题
     askAddition () {
-      // console.log('askAddition')
       const adtIndex = this.hasAnswered - 4 + 49
-      // console.log(this.data[adtIndex].as[0])
       this.conversation.push({
         type: 'other',
         text: this.data[adtIndex].as[0]
@@ -251,8 +279,6 @@ export default {
         type: 'other',
         text: ''
       }
-      // console.log(other.text)
-      // console.log(this.conversation[this.conversation.length - 1])
       this.hasAnswered ++
       if ((this.showQuestionIndex === this.rightAnswer && this.conversation[this.conversation.length - 1].text === 'true') || this.showQuestionIndex !== this.rightAnswer && this.conversation[this.conversation.length - 1].text === 'false') {
         this.rightAnswers ++
@@ -313,11 +339,14 @@ export default {
     // 查看报告
     seeReport () {
       console.log('seeReport')
-      this.$router.push({name: 'result'})
+      this.$router.replace({name: 'result'})
     },
     // 发送姓名
     sendName () {
-      // console.log('answer' + this.answerer)
+      if (!this.answerer) {
+        return
+      }
+      localStorage.setItem('username', this.answerer)
       this.started = true
       this.conversation.push({
         type: 'my-text',
@@ -330,47 +359,23 @@ export default {
         })
         this.canSelect = true
         this.nextStep = 'knowMe'
-
-        // test
-        // this.nextStep = 'addition'
-        // this.hasAnswered = 5
-        // this.showTip()
       }, 1000)
     },
     // 滚动到最底部
     scrollBottom () {
       window.scroll(0, 50000)
-    },
-    // 测试
-    test () {
-      // this.nextStep = 'addition'
-      // this.showTip()
-
-      // this.conversation = []
-      // this.rightAnswers = 0
-      // this.hasAnswered = 5
-      // this.finish = true
-      // this.nextStep = 'finish'
-      // this.judge()
-      // window.setTimeout(() => {
-      //   this.conversation.push({
-      //     type: 'other',
-      //     text: this.answerer + this.start.title
-      //   })
-      //   this.canSelect = true
-      //   this.nextStep = 'knowMe'
-      // }, 1000)
     }
   },
   computed: {
     // 用户问题
     question () {
-      for (const question of this.allQuestions) {
-        const key = question['.key']
-        if (key === this.key) {
-          return question
-        }
-      }
+      return this.$root.userInfo[this.questionId]
+    },
+    score () {
+      return Math.floor(parseFloat(this.rightAnswers / this.hasAnswered) * 100)
+    },
+    serverData () {
+      return this.$root.$wilddogRefs.ref.child(this.questionId)
     }
   }
 }
@@ -378,7 +383,7 @@ export default {
 
 <style scoped>
 .chat-list-enter-active, .chat-list-leave-active {
-  transition: all .5s;
+  transition: all .3s;
 }
 .chat-list-enter, .chat-list-leave-active {
   opacity: 0;

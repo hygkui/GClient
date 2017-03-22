@@ -22,12 +22,12 @@ const routes = [
     component: Edit
   },
   {
-    path: '/result',
+    path: '/result/:name/:time',
     name: 'result',
     component: Result
   },
   {
-    path: '/answer',
+    path: '/answer/:name/:time',
     name: 'answer',
     component: Answer
   },
@@ -40,38 +40,27 @@ var wilddogApp = Wilddog.initializeApp({
   syncURL: 'https://lie.wilddogio.com/'
 })
 var sync = wilddogApp.sync()
-let ref = sync.ref('/data')
-let ref2 = sync.ref('/test')
-
-ref.on('value', function (snapshot) {
-  console.log(snapshot.val())
-})
-
-// ref.on('child_added', (data) => {
-//   console.log(data)
-// })
-
-// ref2.push({
-//   name: 'run',
-//   value: 23
-// })
-
-// ref2.child('朝润2017').set({
-//   name: 'chao',
-//   age: 22
-// })
-
-// ref.child('chao').set({
-//   name: 'chao',
-//   age: 22
-// })
+let ref = sync.ref('/lie')
 
 let vm = new Vue({
   router,
   wilddog: {
     ref: ref,
-    wilddogData: sync.ref('/data2')
+    userInfo: {
+      source: sync.ref('/lie'),
+      // 可选，作为对象绑定
+      asObject: true,
+      // 可选，提供一个回调
+      cancelCallback: function () {}
+    }
   }
 }).$mount('#app')
 
-vm.$bindAsArray('questions', ref2.child('/chao'))
+router.beforeEach((to, from, next) => {
+  if (from.name === 'edit' && to.name === 'result') {
+    vm.fromEdit = true
+  } if (from.name === 'answer' && to.name === 'result') {
+    vm.fromAnswer = true
+  }
+  next()
+})

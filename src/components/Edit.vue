@@ -7,12 +7,21 @@
         <img class="face" src="../assets/index_face.gif">
       </div>
       <div class="bottom">
-        <h1>让朋友更了解你的态度</h1>
-        <img class="btn" @click="page=2" src="../assets/set_title_btn.png">
+        <div v-if="start">
+          <h1>让朋友更了解你的态度</h1>
+          <img class="btn" @click="page=2" src="../assets/set_title_btn.png">
+        </div>
+        <h1 v-if="!start">请先输入姓名</h1>
+      </div>
+      <!--一开始输入姓名-->
+      <div v-if="!start" class="input-box">
+        <input @keyup.enter="sendName" id="username-input" placeholder="请输入姓名" type="text" v-model="name">
+        <button :disabled="!this.name.length" @click="sendName">发送</button>
       </div>
     </div>
     <!--选择题目和答案页-->
     <div v-if="page===2" class="page2">
+      <!--顶部-->
       <div class="top-bar">
         <img v-if="questions.length >= questionLength - 1 && select != -1" src="../assets/wait_top.png">
         <img v-else src="../assets/edit_top.png">
@@ -28,21 +37,24 @@
           <div class="change" @click="changeQuestion">换一张</div>
           <div class="clearfix"></div>
         </div>
-        <div v-bind:class="[select==0 ? 'check' : 'not-check', 'answer']" @click="select=0">{{ question.as[0] }}</div>
-        <div v-bind:class="[select==1 ? 'check' : 'not-check', 'answer']" @click="select=1">{{ question.as[1] }}</div>
+        <!--选择结果-->
+        <div :class="[select==0 ? 'check' : 'not-check', 'answer']" @click="select=0">{{ question.as[0] }}</div>
+        <div :class="[select==1 ? 'check' : 'not-check', 'answer']" @click="select=1">{{ question.as[1] }}</div>
+        <!--下一步按钮-->
         <div class="btn-container" v-if="questions.length < questionLength - 1">
           <img v-if="select === -1" class="next-btn" src="../assets/next_disabled.png">
           <transition name="real-next">
             <img v-if="select !== -1" class="next-btn" @click="nextQuestion" src="../assets/next.png">
           </transition>
         </div>
+        <!--完成按钮-->
         <div class="btn-container" v-else>
           <img v-if="select == -1" class="next-btn" src="../assets/done_disabled.png">
           <transition name="real-next">
-            <img v-if="select !== -1" class="next-btn" v-bind:class="submited ? 'real-next-enter-active' : ''" @click="done" src="../assets/done_btn.png">
+            <img v-if="select !== -1 && !submited" class="next-btn" :class="submited ? 'real-next-enter-active' : ''" @click="done" src="../assets/done_btn.png">
           </transition>
         </div>
-        <div class="container-bottom">
+        <div v-if="!submited" class="container-bottom">
           <span>第{{ questions.length + 1 }}题/共{{ questionLength }}题</span>
         </div>
       </div>
@@ -54,7 +66,6 @@
 import data from '../data'
 
 export default {
-  name: 'lie',
   data () {
     return {
       page: 1,
@@ -64,61 +75,88 @@ export default {
       questions: [],
       questionLength: 5,
       ref: null,
-      submited: false
+      submited: false,
+      name: '',
+      start: false
     }
   },
   created () {
-    console.log(data.length)
+    // 如果已经出题
+    let lie = localStorage.getItem('lie')
+    lie = JSON.parse(lie)
+    if (lie) {
+      // console.log(lie)
+      this.$router.replace({name: 'result', params: lie})
+    }
+
+    window.scroll(0, 0)
     this.changeQuestion()
-    // console.log(this.wilddogData)
-    console.log(this.$root.$wilddogRefs.ref)
-    // this.$root.$bindAsArray('test', this.$root.wilddogRef.child('ttt'))
+    const name = localStorage.getItem('username')
+    if (name) {
+      this.name = name
+      this.start = true
+      document.title = `你看得出${name}在说谎吗?`
+    }
+  },
+  mounted () {
+    if (!this.name) {
+      const input = document.getElementById('username-input')
+      input.focus()
+    }
   },
   methods: {
+    // 发送姓名
+    sendName () {
+      localStorage.setItem('username', this.name)
+      this.start = true
+    },
+    // 换一题
     changeQuestion () {
       let time = 0
       let isInQuestion = 0
       do {
         time++
-        this.questionIndex = Math.floor(Math.random() * this.data.length)
-        console.log(this.questionIndex)
+        this.questionIndex = Math.floor(Math.random() * 50)
+        // console.log(this.questionIndex)
         // 判断该道题是否已经做过
-        isInQuestion = this.questions.filter((question) => {
+        isInQuestion = this.questions.some((question) => {
           return question.index === this.questionIndex
-        }).length
-        console.log('isInQuestion:' + isInQuestion)
+        })
+        // console.log('isInQuestion:' + isInQuestion)
       } while (isInQuestion && time < 10)
       this.select = -1
     },
+    // 下一题
     nextQuestion () {
-      console.log('next')
+      // console.log('next')
       this.questions.push({
         index: this.questionIndex,
         answer: this.select
       })
-      // this.wilddogData.push({
-      //   name: '朝润',
-      //   value: 'no'
-      // })
       this.changeQuestion()
-      // console.log(this.$root.items)
-      // console.log(this.$root.test)
-      // console.log(this.$root)
     },
+    // 完成
     done () {
       this.questions.push({
         index: this.questionIndex,
         answer: this.select
       })
       this.submited = true
-      // this.$root.$wilddogRefs.ref.push({
-      //   name: '何朝润',
-      //   answer: this.questions
-      // }).then(function (newRef) {
-      //   console.log(newRef.path.A[1])
-      //   console.info(newRef.toString())
-      // })
-      console.log('done!')
+      const time = Date.parse(new Date())
+      const user = this.name + time
+      const params = {name: this.name, time}
+      this.$root.$wilddogRefs.ref.child(user).set({
+        name: this.name,
+        answer: this.questions
+      }, (res) => {
+        if (res === null) {
+          localStorage.setItem('lie', JSON.stringify(params))
+          localStorage.setItem('username', this.name)
+          this.$router.replace({name: 'result', params})
+        } else {
+          window.alert('服务器出错!')
+        }
+      })
     }
   },
   computed: {
