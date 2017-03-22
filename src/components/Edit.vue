@@ -85,7 +85,6 @@ export default {
     let lie = localStorage.getItem('lie')
     lie = JSON.parse(lie)
     if (lie) {
-      // console.log(lie)
       this.$router.replace({name: 'result', params: lie})
     }
 
@@ -117,18 +116,15 @@ export default {
       do {
         time++
         this.questionIndex = Math.floor(Math.random() * 50)
-        // console.log(this.questionIndex)
         // 判断该道题是否已经做过
         isInQuestion = this.questions.some((question) => {
           return question.index === this.questionIndex
         })
-        // console.log('isInQuestion:' + isInQuestion)
       } while (isInQuestion && time < 10)
       this.select = -1
     },
     // 下一题
     nextQuestion () {
-      // console.log('next')
       this.questions.push({
         index: this.questionIndex,
         answer: this.select
@@ -213,7 +209,6 @@ export default {
 }
 .top-bar {
   width: 100%;
-  /*background: #f00;*/
   padding: .2rem 0;
 }
 .top-bar img {
@@ -222,7 +217,6 @@ export default {
   margin: 0 auto;
 }
 .container {
-  /*background-color: rgba(216, 194, 194, 0.65);*/
   width: 85%;
   height: 55%;
   position: fixed;
@@ -235,20 +229,17 @@ export default {
 .container .head {
   width: 100%;
   margin-bottom: .1rem;
-  /*padding: 1em 0;*/
 }
 .head .title {
   width: 75%;
   color: rgb(33, 55, 127);
   font-size: .7rem;
-  /*background-color: #f00;*/
   float: left;
 }
 .head .change {
   width: 25%;
   color: rgba(33, 55, 127, 0);
   font-size: .6rem;  
-  /*background-color: #0f0;*/
   float: left;
 }
 .clearfix {
@@ -282,7 +273,6 @@ export default {
 }
 .btn-container {
   width: 100%;
-  /*background: #f00;*/
   position: absolute;
   left: 0;
   top: 7.2rem;
@@ -291,11 +281,6 @@ export default {
   width: 45%;
   margin: 0 auto;
   display: block;
-  /*position: absolute;*/
-  /*bottom: .3rem;*/
-  /*top: 7.2rem;*/
-  /*left: 50%;*/
-  /*transform: translate(-50%, 0);*/
 }
 .real-next-enter-active {
   animation: scale-in .8s;
@@ -330,7 +315,6 @@ export default {
   color: #b46e53;
   font-size: .8rem;
   position: absolute;
-  /*bottom: .1rem;*/
   top: 9rem;
   left: 50%;
   transform: translate(-50%, 0);
