@@ -73,6 +73,7 @@ export default {
       questionIndex: 0,
       select: -1,
       questions: [],
+      ignoreList: [],
       questionLength: 5,
       ref: null,
       submited: false,
@@ -113,14 +114,13 @@ export default {
     changeQuestion () {
       let time = 0
       let isInQuestion = 0
+      this.ignoreList.push(this.questionIndex)
       do {
         time++
         this.questionIndex = Math.floor(Math.random() * 50)
-        // 判断该道题是否已经做过
-        isInQuestion = this.questions.some((question) => {
-          return question.index === this.questionIndex
-        })
-      } while (isInQuestion && time < 10)
+        // 判断该道题是否已经做过或换过
+        isInQuestion = this.ignoreList.indexOf(this.questionIndex) > -1
+      } while (isInQuestion && time < 100)
       this.select = -1
     },
     // 下一题
@@ -138,6 +138,7 @@ export default {
         answer: this.select
       })
       this.submited = true
+
       const time = Date.parse(new Date())
       const user = this.name + time
       const params = {name: this.name, time}
@@ -156,6 +157,7 @@ export default {
     }
   },
   computed: {
+    // 显示的题目
     question () {
       return this.data[this.questionIndex]
     }

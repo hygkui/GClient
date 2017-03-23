@@ -2,6 +2,9 @@
 
 > 仿腾讯管家真假朋友第二季
 
+ ![image](https://github.com/HumiH/lie/raw/master/src/assets/logo.png)
+
+
 ## Build Setup
 
 ``` bash

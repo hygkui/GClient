@@ -140,7 +140,6 @@ export default {
       }, 500)
     }
     window.scroll(0, 0)
-    // document.title = this.title.title
     this.conversation.push({
       type: 'other',
       text: '你叫什么名字呢?'
@@ -206,7 +205,8 @@ export default {
           localStorage.setItem('allAnswerIds', JSON.stringify(this.allAnswerIds))
           this.serverData.child('results').push({
             answerer: this.answerer,
-            score: this.score
+            score: this.score,
+            time: Date.parse(new Date())
           })
           window.setTimeout(() => { this.showTip() }, 1000)
           break
@@ -371,9 +371,11 @@ export default {
     question () {
       return this.$root.userInfo[this.questionId]
     },
+    // 分数
     score () {
       return Math.floor(parseFloat(this.rightAnswers / this.hasAnswered) * 100)
     },
+    // 服务器数据
     serverData () {
       return this.$root.$wilddogRefs.ref.child(this.questionId)
     }

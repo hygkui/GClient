@@ -4,6 +4,7 @@
     <img v-if="fromEdit && name === username && !orderDesc(results).length" src="../assets/send_group.gif" class="full-width-img">
     <!--朋友做完题后看到的界面-->
     <div v-else-if="fromAnswer && name !== username">
+      <div class="answer-again" @click="answerAgain">重新回答</div>
       <div class="done-img">
         <p class="names"><span class="name">{{username}}</span>和<span class="name">{{name}}</span></p>
         <p class="score">{{answererResult.score}}</p>
@@ -12,6 +13,7 @@
     </div>
     <!--再次进入看到的界面-->
     <div v-else class="wait-img">
+      <div v-if="name !== username" class="answer-again" @click="answerAgain">重新回答</div>
       <div class="avatar">
         <img v-if="name.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
         <img v-else-if="questionId.indexOf('靖娴') > -1 || questionId.indexOf('小宝宝') > -1" class="full-width-img" src="../assets/me.jpg">
@@ -52,11 +54,13 @@ export default {
   data () {
     return {
       name: '',
+      time: null,
       fromEdit: this.$root.fromEdit,
       fromAnswer: this.$root.fromAnswer,
       resultText: { 0: '请问，你贵姓？', 20: '交了个假朋友', 40: '我们之间隔了一道墙', 60: '多发两个红包加强沟通吧', 80: '好基友一辈纸', 100: '高山流水遇知音' },
       username: null,
-      questionId: null
+      questionId: null,
+      allAnswerIds: []
     }
   },
   created () {
@@ -66,15 +70,14 @@ export default {
     const time = this.$route.params.time
     this.questionId = name + time
     this.name = name
+    this.time = time
     this.username = localStorage.getItem('username')
     document.title = `你看得出${name}在说谎吗?`
 
     let allAnswerIds = localStorage.getItem('allAnswerIds')
-    allAnswerIds = JSON.parse(allAnswerIds)
+    this.allAnswerIds = allAnswerIds = JSON.parse(allAnswerIds)
     if (!allAnswerIds) allAnswerIds = []
-    const hasAnswered = allAnswerIds.some((id) => {
-      return id === this.questionId
-    })
+    const hasAnswered = allAnswerIds.indexOf(this.questionId) > -1
     if (!hasAnswered && name !== this.username) {
       this.$router.replace({name: 'answer', params: {name: name, time: time}})
     }
@@ -82,6 +85,7 @@ export default {
   methods: {
     // 我也要玩
     play () {
+      localStorage.removeItem('lie')
       this.$router.replace({name: 'edit'})
     },
     // 将好友倒叙排列
@@ -96,6 +100,17 @@ export default {
     reEdit () {
       localStorage.removeItem('lie')
       this.$router.push({name: 'edit'})
+    },
+    // 重新回答
+    answerAgain () {
+      console.log('answer again')
+      let isConfirm = confirm('确认重新答题？')
+      console.log(isConfirm)
+      if (isConfirm) {
+        this.allAnswerIds.splice(this.allAnswerIds.indexOf(this.questionId), 1)
+        localStorage.setItem('allAnswerIds', JSON.stringify(this.allAnswerIds))
+        this.$router.replace({name: 'answer', params: {name: this.name, time: this.time}})
+      }
     }
   },
   computed: {
@@ -153,6 +168,13 @@ export default {
   text-align: center;
   top: 1.7rem;
   left: 3.8rem;
+}
+.answer-again {
+  position: absolute;
+  color: rgba(0, 0, 0, 0);
+  top: .5rem;
+  left: .6rem;
+  font-size: .2rem;
 }
 #reset-question {
   position: absolute;
