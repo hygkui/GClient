@@ -7,6 +7,12 @@
  
 ![image](https://github.com/HumiH/lie/raw/master/src/assets/results/answer.gif)
 
+## 体验
+
+可点开链接[https://humih.github.io/lie/#/result/%E8%80%81%E6%9C%9D/1490287575000](https://humih.github.io/lie/#/result/%E8%80%81%E6%9C%9D/1490287575000) 查看，也可用手机扫码：
+
+![image](https://github.com/HumiH/lie/raw/master/src/assets/results/qrcode.png)
+
 ## 关于该项目
 
 前几天朋友圈很多人分享腾讯手机管家的这个活动，女朋友看到后也出题发了一份给我，我理所当然地得了100分。不过我在出题给她做时没注意到上方几个小字“只选择你的真心话”，误选了相反的答案...结果可想而知，她做完发现只有0分。然后自己赶紧重新出题发给她，却发现同一用户只能回答一次。女朋友不开心肯定要哄啊，那怎么办？腾讯的这页面同一用户不能重复回答怎么办？那就自己写一个出来呗。
