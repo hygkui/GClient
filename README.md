@@ -9,7 +9,9 @@
 
 ## 体验
 
-可点开链接[https://humih.github.io/lie/#/result/%E8%80%81%E6%9C%9D/1490287575000](https://humih.github.io/lie/#/result/%E8%80%81%E6%9C%9D/1490287575000) 查看，也可用手机扫码：
+### 刚刚野狗那边发短信告诉我今天的设备数已经超过限制了，因为是免费的。。。学生党伤不起。可能会出现新设备无法访问的情况，本人目前也不方便改，喜欢的朋友可以克隆项目改自己的野狗链接来测试
+
+可点开答题链接[https://humih.github.io/lie/#/result/%E8%80%81%E6%9C%9D/1490287575000](https://humih.github.io/lie/#/result/%E8%80%81%E6%9C%9D/1490287575000) 查看，出题链接是[https://humih.github.io/lie/#/edit](https://humih.github.io/lie/#/edit)，也可用手机扫码：
 
 ![image](https://github.com/HumiH/lie/raw/master/src/assets/results/qrcode.png)
 
