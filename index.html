@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>真假朋友第二季</title>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no" />
+    <!--<meta name="viewport" content="width=device-width,user-scalable=no">-->
+    <meta name="viewport" content="width=device-width, height=device-height">
+    <meta name="x5-orientation" content="portrait"/>
+    <style>
+      html {
+        height: 100%;
+      }
+      body, #app {
+        height: 100%;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        font-family:"microsoft yahei";
+      }
+    </style>
+    <script>
+        var cssEl = document.createElement('style');
+        document.documentElement.firstElementChild.appendChild(cssEl);
+    
+        function setPxPerRem(){
+            var dpr = 1;
+            //把viewport分成10份的rem，html标签的font-size设置为1rem的大小;
+            var pxPerRem = document.documentElement.clientWidth * dpr / 10;
+            cssEl.innerHTML = 'html{font-size:' + pxPerRem + 'px!important;}';
+        }
+        setPxPerRem();
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <router-view></router-view>
+    </div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
