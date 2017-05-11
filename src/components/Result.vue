@@ -230,7 +230,7 @@ export default {
   color: #fff;
 }
 .result .friend {
-  width: 100%;
+  width: 9rem;
   float: left;
   background: #711dda;
   height: 1.5rem;
@@ -238,12 +238,14 @@ export default {
 }
 .friend .avatar {
   padding: .1rem;
+  width: 1.3rem;
   height: 1.3rem;
   display: block;
   float: left;
 }
 .friend .txt {
   float: left;
+  width: 4.1rem;
   margin-left: .2rem;
 }
 .txt h1 {
@@ -253,11 +255,15 @@ export default {
   line-height: 1rem;
   height: 1rem;
   text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .txt p {
   font-size: .3rem;
   line-height: .5rem;
   height: .4rem;
+  text-align: left;
   color: #FF7400;
 }
 .friend .score {
