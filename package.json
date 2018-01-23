@@ -1,8 +1,8 @@
 {
   "name": "lie",
   "version": "1.0.0",
-  "description": "仿腾讯管家真假朋友第二季",
-  "author": "Chao <hechaorun@qq.com>",
+  "description": "小游戏客户端",
+  "author": "hygkui <hygkui@gmail.com>",
   "private": true,
   "scripts": {
     "dev": "node build/dev-server.js",
