@@ -74,6 +74,7 @@
 
 <script>
   import http from 'axios'
+  const baseURL = 'http://45.32.111.21:6300'
 
   export default {
     name: 'game-board',
@@ -96,7 +97,7 @@
     methods: {
       checkAnswer (choice) {
         let that = this
-        http.post('http://127.0.0.1:3000/api/checkAnswer', {
+        http.post(baseURL + '/api/checkAnswer', {
           userId: that.userId,
           questionId: that.board.question.questionId,
           choice
@@ -106,7 +107,7 @@
       },
       recovery (code) {
         console.log('recovery:', code)
-        http.post('http://127.0.0.1:3000/api/recovery', {
+        http.post(baseURL + '/api/recovery', {
           userId: this.userId,
           code
         })
@@ -119,7 +120,7 @@
         if (this.userId.length > 0) {
           let that = this
           console.log('enterGame, reset for ', this.userId)
-          http.post('http://127.0.0.1:3000/api/enterGame', {
+          http.post(baseURL + '/api/enterGame', {
             userId: that.userId
           }).then(function (res) {
             console.log(res.data)
