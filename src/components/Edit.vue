@@ -38,8 +38,10 @@
           <div class="clearfix"></div>
         </div>
         <!--选择结果-->
-        <div :class="[select==0 ? 'check' : 'not-check', 'answer']" @click="select=0">{{ question.as[0] }}</div>
-        <div :class="[select==1 ? 'check' : 'not-check', 'answer']" @click="select=1">{{ question.as[1] }}</div>
+        <div v-if="question.as[0]" :class="[select==0 ? 'check' : 'not-check', 'answer']" @click="select=0">{{ question.as[0] }}</div>
+        <div v-if="question.as[1]" :class="[select==1 ? 'check' : 'not-check', 'answer']" @click="select=1">{{ question.as[1] }}</div>
+        <div v-if="question.as[2]" :class="[select==2 ? 'check' : 'not-check', 'answer']" @click="select=2">{{ question.as[2] }}</div>
+        <div v-if="question.as[3]" :class="[select==3 ? 'check' : 'not-check', 'answer']" @click="select=3">{{ question.as[3] }}</div>
         <!--下一步按钮-->
         <div class="btn-container" v-if="questions.length < questionLength - 1">
           <img v-if="select === -1" class="next-btn" src="../assets/next_disabled.png">
@@ -241,7 +243,7 @@ export default {
 .head .change {
   width: 25%;
   color: rgba(33, 55, 127, 0);
-  font-size: .6rem;  
+  font-size: .6rem;
   float: left;
 }
 .clearfix {

@@ -1,104 +1,136 @@
 <template>
-  <div class="page">
-    <div class="talk">
-      <!--聊天界面-->
-      <transition-group v-on:enter="scrollBottom" name="chat-list">
-        <div v-for="(message, index) in conversation" :key="index">
-          <!--对方文字消息-->
-          <div v-if="message.type === 'other'" :class="message.text === conversation[conversation.length - 1].text && (nextStep === 'answer' || nextStep === 'additionA') ? 'now' : ''" class="row other">
-            <div class="avatar">
-              <img v-if="questionId.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
-              <img v-else-if="questionId.indexOf('靖娴') > -1 || questionId.indexOf('小宝宝') > -1" src="../assets/me.jpg">
-              <img v-else class="full-width-img" src="../assets/logo.png">
+
+    <!--<div class="ctrlBoard" style="clear: both;">-->
+      <!--<pre>-->
+      <!--题目：萨达姆有多少钱？-->
+      <!--A: 120万-->
+      <!--B: 234亿-->
+      <!--C: 21人民币-->
+      <!--</pre>-->
+
+      <!--<p style="text-align: center; width: 100%;border: 10px solid gray">倒计时：<span style="font-size: 2em;">5</span>秒</p>-->
+
+
+      <!--<div class="input-box">-->
+        <!--<button  class="bottom-btn a-btn" @click="sayABC('A')">总选A</button>-->
+        <!--<button  class="bottom-btn b-btn" @click="sayABC('B')">牛B</button>-->
+        <!--<button  class="bottom-btn c-btn" @click="sayABC('C')">都选C</button>-->
+      <!--</div>-->
+
+
+    <!--</div>-->
+
+  <div style="width:100%; height: 100%; margin: 0; padding: 0; display: block">
+    <div style="width: 100%; height: 80%; background-color: whitesmoke; font-size: 14pt;">
+      <game-board/>
+    </div>
+    <div style="display: none; width: 100%; height: 10%; background-color: green;">
+      <div class="page" >
+        <div class="talk">
+          <!--聊天界面-->
+          <transition-group v-on:enter="scrollBottom" name="chat-list">
+            <div v-for="(message, index) in conversation" :key="index">
+              <!--对方文字消息-->
+              <div v-if="message.type === 'other'" :class="message.text === conversation[conversation.length - 1].text && (nextStep === 'answer' || nextStep === 'additionA') ? 'now' : ''" class="row other">
+                <div class="avatar">
+                  <img v-if="questionId.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
+                  <img v-else-if="questionId.indexOf('靖娴') > -1 || questionId.indexOf('小宝宝') > -1" src="../assets/me.jpg">
+                  <img v-else class="full-width-img" src="../assets/logo.png">
+                </div>
+                <div class="box"><em></em><span></span>{{ message.text }}</div>
+                <div class="clearfix"></div>
+              </div>
+              <!--对方的表情包-->
+              <div v-if="message.type === 'img'" class="row other">
+                <div class="avatar">
+                  <img class="full-width-img" src="../assets/other.jpg">
+                </div>
+                <div class="img-box">
+                  <img class="full-width-img" src="../assets/love_you.gif">
+                </div>
+                <div class="clearfix"></div>
+              </div>
+              <!--质检报告-->
+              <div v-if="message.type === 'res'" class="row other">
+                <div class="avatar">
+                  <img v-if="questionId.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
+                  <img v-else-if="questionId.indexOf('靖娴') > -1 || questionId.indexOf('小宝宝') > -1" src="../assets/me.jpg">
+                  <img v-else class="full-width-img" src="../assets/logo.png">
+                </div>
+                <div class="report">
+                  <img class="full-width-img" @click="seeReport" src="../assets/result.jpg">
+                </div>
+                <div class="clearfix"></div>
+              </div>
+              <!--提示消息-->
+              <div v-if="message.type === 'tip'" class="row">
+                <div class="tip"><span>{{ message.text }}</span></div>
+                <div class="clearfix"></div>
+              </div>
+              <!--我的文字消息-->
+              <div v-if="message.type === 'me'" class="row me">
+                <div class="avatar">
+                  <img v-if="answerer.indexOf('靖娴') > -1 || answerer.indexOf('小宝宝') > -1" class="full-width-img" src="../assets/me.jpg">
+                  <img v-else-if="answerer.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
+                  <img v-else class="full-width-img" src="../assets/logo.png">
+                </div>
+                <img v-if="message.text === 'true'" class="response" src="../assets/true.jpg">
+                <img v-else-if="message.text === 'false'"  class="response" src="../assets/false.jpg">
+                <img v-else-if="message.text === 'A'"  class="response" src="../assets/a.jpg">
+                <img v-else-if="message.text === 'B'"  class="response" src="../assets/b.jpg">
+                <img v-else-if="message.text === 'C'"  class="response" src="../assets/c.jpg">
+                <div class="clearfix"></div>
+              </div>
+              <!--我的文字消息-->
+              <div v-if="message.type === 'my-text'" class="row me my-text">
+                <div class="avatar">
+                  <img v-if="answerer.indexOf('靖娴') > -1 || answerer.indexOf('小宝宝') > -1" class="full-width-img" src="../assets/me.jpg">
+                  <img v-else-if="answerer.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
+                  <img v-else class="full-width-img" src="../assets/logo.png">
+                </div>
+                <div class="box"><em></em><span></span>{{ message.text }}</div>
+                <div class="clearfix"></div>
+              </div>
+              <div class="clearfix"></div>
             </div>
-            <div class="box"><em></em><span></span>{{ message.text }}</div>
-            <div class="clearfix"></div>
-          </div>
-          <!--对方的表情包-->
-          <div v-if="message.type === 'img'" class="row other">
-            <div class="avatar">
-              <img class="full-width-img" src="../assets/other.jpg">
-            </div>
-            <div class="img-box">
-              <img class="full-width-img" src="../assets/love_you.gif">
-            </div>
-            <div class="clearfix"></div>
-          </div>
-          <!--质检报告-->
-          <div v-if="message.type === 'res'" class="row other">
-            <div class="avatar">
-              <img v-if="questionId.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
-              <img v-else-if="questionId.indexOf('靖娴') > -1 || questionId.indexOf('小宝宝') > -1" src="../assets/me.jpg">
-              <img v-else class="full-width-img" src="../assets/logo.png">
-            </div>
-            <div class="report">
-              <img class="full-width-img" @click="seeReport" src="../assets/result.jpg">
-            </div>
-            <div class="clearfix"></div>
-          </div>
-          <!--提示消息-->
-          <div v-if="message.type === 'tip'" class="row">
-            <div class="tip"><span>{{ message.text }}</span></div>
-            <div class="clearfix"></div>
-          </div>
-          <!--我的文字消息-->
-          <div v-if="message.type === 'me'" class="row me">
-            <div class="avatar">
-              <img v-if="answerer.indexOf('靖娴') > -1 || answerer.indexOf('小宝宝') > -1" class="full-width-img" src="../assets/me.jpg">
-              <img v-else-if="answerer.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
-              <img v-else class="full-width-img" src="../assets/logo.png">
-            </div>
-            <img v-if="message.text === 'true'" class="response" src="../assets/true.jpg">
-            <img v-else-if="message.text === 'false'"  class="response" src="../assets/false.jpg">
-            <img v-else-if="message.text === 'A'"  class="response" src="../assets/a.jpg">
-            <img v-else-if="message.text === 'B'"  class="response" src="../assets/b.jpg">
-            <img v-else-if="message.text === 'C'"  class="response" src="../assets/c.jpg">
-            <div class="clearfix"></div>
-          </div>
-          <!--我的文字消息-->
-          <div v-if="message.type === 'my-text'" class="row me my-text">
-            <div class="avatar">
-              <img v-if="answerer.indexOf('靖娴') > -1 || answerer.indexOf('小宝宝') > -1" class="full-width-img" src="../assets/me.jpg">
-              <img v-else-if="answerer.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
-              <img v-else class="full-width-img" src="../assets/logo.png">
-            </div>
-            <div class="box"><em></em><span></span>{{ message.text }}</div>
-            <div class="clearfix"></div>
-          </div>
-          <div class="clearfix"></div>
+          </transition-group>
+          <div id="bottom" v-show="!finish"></div>
         </div>
-      </transition-group>
-      <div id="bottom" v-show="!finish"></div>
-    </div>
-    <!--一开始输入姓名-->
-    <div v-if="!started" class="input-box">
-      <input @keyup.enter="sendName" id="name-input" placeholder="请输入姓名" type="text" v-model="answerer">
-      <button :disabled="!this.answerer.length" @click="sendName">发送</button>
-    </div>
-    <!--显示对方姓名-->
-    <div v-if="question && !finish && started" class="ask-name">{{ question.name }}</div>
-    <!--底部图片-->
-    <transition v-on:after-leave="scrollBottom">
-      <img v-if="!finish && started" class="full-width-img bottom-img" src="../assets/is_real.png">
-    </transition>
-    <!--选择按钮-->
-    <!--<transition name="answer-btn">-->
-      <!--<img v-if="canSelect && nextStep != 'additionA'" class="bottom-btn no-btn" @click="sayNo" src="../assets/no.png">-->
-      <!--<img v-if="canSelect && nextStep == 'additionA'" class="bottom-btn no-btn" @click="sayYes" src="../assets/yes.png">-->
-    <!--</transition>-->
-    <!--<transition name="answer-btn">-->
-      <!--<img v-if="canSelect && started" class="bottom-btn yes-btn" @click="sayYes" src="../assets/yes.png">-->
-    <!--</transition>-->
-    <div class="input-box">
-      <button v-if="canSelect && started" class="bottom-btn a-btn" @click="sayABC('A')">总选A</button>
-      <button v-if="canSelect && started" class="bottom-btn b-btn" @click="sayABC('B')">牛B</button>
-      <button v-if="canSelect && started" class="bottom-btn c-btn" @click="sayABC('C')">都选C</button>
+        <!--一开始输入姓名-->
+        <!--<div v-if="!started" class="input-box">-->
+        <!--<input @keyup.enter="sendName" id="name-input" placeholder="请输入姓名" type="text" v-model="answerer">-->
+        <!--<button :disabled="!this.answerer.length" @click="sendName">发送</button>-->
+        <!--</div>-->
+
+        <div class="input-box">
+          <input @keyup.enter="sendMessage" id="text-input" placeholder="消息" type="text" v-model="mText">
+          <button :disabled="!this.mText.length" @click="sendMessage">发送消息</button>
+        </div>
+
+        <!--显示对方姓名-->
+        <div v-if="question && !finish && started" class="ask-name">{{ question.name }}</div>
+        <!--底部图片-->
+        <!--<transition v-on:after-leave="scrollBottom">-->
+        <!--<img v-if="!finish && started" class="full-width-img bottom-img" src="../assets/is_real.png">-->
+        <!--</transition>-->
+
+        <div class="input-box">
+          <button v-if="canSelect && started" class="bottom-btn a-btn" @click="sayABC('A')">总选A</button>
+          <button v-if="canSelect && started" class="bottom-btn b-btn" @click="sayABC('B')">牛B</button>
+          <button v-if="canSelect && started" class="bottom-btn c-btn" @click="sayABC('C')">都选C</button>
+        </div>
+
+      </div>
     </div>
   </div>
+
+
+
 </template>
 
 <script>
 import data from '../data'
+import GameBoard from './gameBoard'
 
 export default {
   data () {
@@ -121,34 +153,40 @@ export default {
       started: false,
       finish: false,
       questionId: null,
-      allAnswerIds: []
+      allAnswerIds: [],
+      mText: ''
     }
   },
+  components: {
+    'game-board': GameBoard
+  },
   created () {
-    const name = this.$route.params.name
-    const time = this.$route.params.time
-    const username = localStorage.getItem('username')
-    this.questionId = name + time
-    if (username && name === username) { // 如果是本人,跳转到结果页面
-      // this.$router.replace({name: 'result', params: {name, time}})
-      console.log('如果是本人,跳转到结果页面')
-    } else if (username) {
-      let allAnswerIds = localStorage.getItem('allAnswerIds')
-      if (allAnswerIds) {
-        this.allAnswerIds = JSON.parse(allAnswerIds)
-        let hasAnswered = this.allAnswerIds.some((answer) => {
-          return answer === this.questionId
-        })
-        if (hasAnswered) { // 如果已回答过,跳转到结果页面
-          console.log('如果已回答过,跳转到结果页面')
-          this.$router.replace({name: 'result', params: {name, time}})
-        }
-      }
-      window.setTimeout(() => {
-        this.answerer = username
-        this.sendName()
-      }, 500)
-    }
+    // const name = this.$route.params.name
+    // const time = this.$route.params.time
+    // const username = localStorage.getItem('username')
+    // this.questionId = name + time
+    // if (username && name === username) { // 如果是本人,跳转到结果页面
+    //   // this.$router.replace({name: 'result', params: {name, time}})
+    //   console.log('如果是本人,跳转到结果页面')
+    // } else if (username) {
+    //   let allAnswerIds = localStorage.getItem('allAnswerIds')
+    //   if (allAnswerIds) {
+    //     this.allAnswerIds = JSON.parse(allAnswerIds)
+    //     let hasAnswered = this.allAnswerIds.some((answer) => {
+    //       return answer === this.questionId
+    //     })
+    //     if (hasAnswered) { // 如果已回答过,跳转到结果页面
+    //       console.log('如果已回答过,跳转到结果页面')
+    //       this.$router.replace({name: 'result', params: {name, time}})
+    //     }
+    //   }
+    //   window.setTimeout(() => {
+    //     this.answerer = username
+    //     this.sendName()
+    //   }, 500)
+    // }
+    this.answerer = '答题者'
+    this.questionId = this.answerer + '123432332'
     window.scroll(0, 0)
     this.conversation.push({
       type: 'other',
@@ -156,11 +194,11 @@ export default {
     })
   },
   mounted () {
-    const username = localStorage.getItem('username')
-    if (!username) {
-      const input = document.getElementById('name-input')
-      input.focus()
-    }
+    // const username = localStorage.getItem('username')
+    // if (!username) {
+    //   const input = document.getElementById('name-input')
+    //   input.focus()
+    // }
   },
   methods: {
     // 选择假
@@ -188,6 +226,17 @@ export default {
       })
       this.canSelect = false
       window.setTimeout(() => { this.judge() }, 1000)
+    },
+    sendMessage () {
+      this.conversation.push({
+        type: 'my-text',
+        text: this.mText
+      })
+
+      this.mText = ''
+      // window.setTimeout(() => { this.judge() }, 1000)
+      // 滚动到最底部
+      window.scroll(0, 50000)
     },
     // 判断操作
     judge () {
@@ -415,8 +464,7 @@ export default {
 .page {
   background: #C9D0EA;
 }
-</style>
-<style>
+
 .ask-name {
   position: fixed;
   color: #3B0085;
@@ -614,7 +662,7 @@ export default {
 }
 .bottom-btn {
   position: fixed;
-  bottom: .25rem;
+  top: 6.25rem;
   width: 4rem;
 }
 .no-btn {

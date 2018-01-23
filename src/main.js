@@ -7,7 +7,7 @@ import WildVue from 'wildvue'
 
 import Edit from './components/Edit'
 import Result from './components/Result'
-import Answer from './components/Answer'
+import Answer from './components/Answer2'
 
 Vue.use(VueRouter)
 Vue.use(Wilddog)
@@ -27,20 +27,20 @@ const routes = [
     component: Result
   },
   {
-    path: '/answer/:name/:time',
+    path: '/',
     name: 'answer',
     component: Answer
-  },
-  { path: '*', redirect: '/edit' }
+  }
+  // { path: '*', redirect: '/edit' }
 ]
 
 const router = new VueRouter({routes})
 
 var wilddogApp = Wilddog.initializeApp({
-  syncURL: 'https://lie.wilddogio.com/'
+  syncURL: 'https://kuafu.wilddogio.com/'
 })
 var sync = wilddogApp.sync()
-let ref = sync.ref('/lie')
+let ref = sync.ref()
 
 let vm = new Vue({
   router,
