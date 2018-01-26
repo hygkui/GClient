@@ -5,9 +5,10 @@ import VueRouter from 'vue-router'
 import Wilddog from 'wilddog'
 import WildVue from 'wildvue'
 
-import Edit from './components/Edit'
-import Result from './components/Result'
-import Answer from './components/Answer2'
+// import Edit from './components/Edit'
+// import Result from './components/Result'
+// import Answer from './components/Answer2'
+import GameBoard from './components/gameBoard'
 
 Vue.use(VueRouter)
 Vue.use(Wilddog)
@@ -16,20 +17,25 @@ Vue.use(WildVue)
 Vue.config.productionTip = false
 
 const routes = [
-  {
-    path: '/edit',
-    name: 'edit',
-    component: Edit
-  },
-  {
-    path: '/result/:name/:time',
-    name: 'result',
-    component: Result
-  },
+  // {
+  //   path: '/edit',
+  //   name: 'edit',
+  //   component: Edit
+  // },
+  // {
+  //   path: '/result/:name/:time',
+  //   name: 'result',
+  //   component: Result
+  // },
+  // {
+  //   path: '/answer',
+  //   name: 'answer',
+  //   component: Answer
+  // },
   {
     path: '/',
-    name: 'answer',
-    component: Answer
+    name: 'board',
+    component: GameBoard
   }
   // { path: '*', redirect: '/edit' }
 ]

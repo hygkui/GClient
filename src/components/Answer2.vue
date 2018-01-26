@@ -20,108 +20,106 @@
 
     <!--</div>-->
 
-  <div style="width:100%; height: 100%; margin: 0; padding: 0; display: block">
-    <div style="width: 100%; height: 80%; background-color: whitesmoke; font-size: 14pt;">
+  <div style="width:100%; height: 100%; margin: 0; padding: 0;">
       <game-board/>
-    </div>
-    <div style="display: none; width: 100%; height: 10%; background-color: green;">
-      <div class="page" >
-        <div class="talk">
-          <!--聊天界面-->
-          <transition-group v-on:enter="scrollBottom" name="chat-list">
-            <div v-for="(message, index) in conversation" :key="index">
-              <!--对方文字消息-->
-              <div v-if="message.type === 'other'" :class="message.text === conversation[conversation.length - 1].text && (nextStep === 'answer' || nextStep === 'additionA') ? 'now' : ''" class="row other">
-                <div class="avatar">
-                  <img v-if="questionId.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
-                  <img v-else-if="questionId.indexOf('靖娴') > -1 || questionId.indexOf('小宝宝') > -1" src="../assets/me.jpg">
-                  <img v-else class="full-width-img" src="../assets/logo.png">
-                </div>
-                <div class="box"><em></em><span></span>{{ message.text }}</div>
-                <div class="clearfix"></div>
-              </div>
-              <!--对方的表情包-->
-              <div v-if="message.type === 'img'" class="row other">
-                <div class="avatar">
-                  <img class="full-width-img" src="../assets/other.jpg">
-                </div>
-                <div class="img-box">
-                  <img class="full-width-img" src="../assets/love_you.gif">
-                </div>
-                <div class="clearfix"></div>
-              </div>
-              <!--质检报告-->
-              <div v-if="message.type === 'res'" class="row other">
-                <div class="avatar">
-                  <img v-if="questionId.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
-                  <img v-else-if="questionId.indexOf('靖娴') > -1 || questionId.indexOf('小宝宝') > -1" src="../assets/me.jpg">
-                  <img v-else class="full-width-img" src="../assets/logo.png">
-                </div>
-                <div class="report">
-                  <img class="full-width-img" @click="seeReport" src="../assets/result.jpg">
-                </div>
-                <div class="clearfix"></div>
-              </div>
-              <!--提示消息-->
-              <div v-if="message.type === 'tip'" class="row">
-                <div class="tip"><span>{{ message.text }}</span></div>
-                <div class="clearfix"></div>
-              </div>
-              <!--我的文字消息-->
-              <div v-if="message.type === 'me'" class="row me">
-                <div class="avatar">
-                  <img v-if="answerer.indexOf('靖娴') > -1 || answerer.indexOf('小宝宝') > -1" class="full-width-img" src="../assets/me.jpg">
-                  <img v-else-if="answerer.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
-                  <img v-else class="full-width-img" src="../assets/logo.png">
-                </div>
-                <img v-if="message.text === 'true'" class="response" src="../assets/true.jpg">
-                <img v-else-if="message.text === 'false'"  class="response" src="../assets/false.jpg">
-                <img v-else-if="message.text === 'A'"  class="response" src="../assets/a.jpg">
-                <img v-else-if="message.text === 'B'"  class="response" src="../assets/b.jpg">
-                <img v-else-if="message.text === 'C'"  class="response" src="../assets/c.jpg">
-                <div class="clearfix"></div>
-              </div>
-              <!--我的文字消息-->
-              <div v-if="message.type === 'my-text'" class="row me my-text">
-                <div class="avatar">
-                  <img v-if="answerer.indexOf('靖娴') > -1 || answerer.indexOf('小宝宝') > -1" class="full-width-img" src="../assets/me.jpg">
-                  <img v-else-if="answerer.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">
-                  <img v-else class="full-width-img" src="../assets/logo.png">
-                </div>
-                <div class="box"><em></em><span></span>{{ message.text }}</div>
-                <div class="clearfix"></div>
-              </div>
-              <div class="clearfix"></div>
-            </div>
-          </transition-group>
-          <div id="bottom" v-show="!finish"></div>
-        </div>
-        <!--一开始输入姓名-->
-        <!--<div v-if="!started" class="input-box">-->
-        <!--<input @keyup.enter="sendName" id="name-input" placeholder="请输入姓名" type="text" v-model="answerer">-->
-        <!--<button :disabled="!this.answerer.length" @click="sendName">发送</button>-->
+    <!--<div style="display: none; width: 100%; height: 10%; background-color: green;">-->
+      <!--<div class="page" >-->
+        <!--<div class="talk">-->
+          <!--&lt;!&ndash;聊天界面&ndash;&gt;-->
+          <!--<transition-group v-on:enter="scrollBottom" name="chat-list">-->
+            <!--<div v-for="(message, index) in conversation" :key="index">-->
+              <!--&lt;!&ndash;对方文字消息&ndash;&gt;-->
+              <!--<div v-if="message.type === 'other'" :class="message.text === conversation[conversation.length - 1].text && (nextStep === 'answer' || nextStep === 'additionA') ? 'now' : ''" class="row other">-->
+                <!--<div class="avatar">-->
+                  <!--<img v-if="questionId.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">-->
+                  <!--<img v-else-if="questionId.indexOf('靖娴') > -1 || questionId.indexOf('小宝宝') > -1" src="../assets/me.jpg">-->
+                  <!--<img v-else class="full-width-img" src="../assets/logo.png">-->
+                <!--</div>-->
+                <!--<div class="box"><em></em><span></span>{{ message.text }}</div>-->
+                <!--<div class="clearfix"></div>-->
+              <!--</div>-->
+              <!--&lt;!&ndash;对方的表情包&ndash;&gt;-->
+              <!--<div v-if="message.type === 'img'" class="row other">-->
+                <!--<div class="avatar">-->
+                  <!--<img class="full-width-img" src="../assets/other.jpg">-->
+                <!--</div>-->
+                <!--<div class="img-box">-->
+                  <!--<img class="full-width-img" src="../assets/love_you.gif">-->
+                <!--</div>-->
+                <!--<div class="clearfix"></div>-->
+              <!--</div>-->
+              <!--&lt;!&ndash;质检报告&ndash;&gt;-->
+              <!--<div v-if="message.type === 'res'" class="row other">-->
+                <!--<div class="avatar">-->
+                  <!--<img v-if="questionId.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">-->
+                  <!--<img v-else-if="questionId.indexOf('靖娴') > -1 || questionId.indexOf('小宝宝') > -1" src="../assets/me.jpg">-->
+                  <!--<img v-else class="full-width-img" src="../assets/logo.png">-->
+                <!--</div>-->
+                <!--<div class="report">-->
+                  <!--<img class="full-width-img" @click="seeReport" src="../assets/result.jpg">-->
+                <!--</div>-->
+                <!--<div class="clearfix"></div>-->
+              <!--</div>-->
+              <!--&lt;!&ndash;提示消息&ndash;&gt;-->
+              <!--<div v-if="message.type === 'tip'" class="row">-->
+                <!--<div class="tip"><span>{{ message.text }}</span></div>-->
+                <!--<div class="clearfix"></div>-->
+              <!--</div>-->
+              <!--&lt;!&ndash;我的文字消息&ndash;&gt;-->
+              <!--<div v-if="message.type === 'me'" class="row me">-->
+                <!--<div class="avatar">-->
+                  <!--<img v-if="answerer.indexOf('靖娴') > -1 || answerer.indexOf('小宝宝') > -1" class="full-width-img" src="../assets/me.jpg">-->
+                  <!--<img v-else-if="answerer.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">-->
+                  <!--<img v-else class="full-width-img" src="../assets/logo.png">-->
+                <!--</div>-->
+                <!--<img v-if="message.text === 'true'" class="response" src="../assets/true.jpg">-->
+                <!--<img v-else-if="message.text === 'false'"  class="response" src="../assets/false.jpg">-->
+                <!--<img v-else-if="message.text === 'A'"  class="response" src="../assets/a.jpg">-->
+                <!--<img v-else-if="message.text === 'B'"  class="response" src="../assets/b.jpg">-->
+                <!--<img v-else-if="message.text === 'C'"  class="response" src="../assets/c.jpg">-->
+                <!--<div class="clearfix"></div>-->
+              <!--</div>-->
+              <!--&lt;!&ndash;我的文字消息&ndash;&gt;-->
+              <!--<div v-if="message.type === 'my-text'" class="row me my-text">-->
+                <!--<div class="avatar">-->
+                  <!--<img v-if="answerer.indexOf('靖娴') > -1 || answerer.indexOf('小宝宝') > -1" class="full-width-img" src="../assets/me.jpg">-->
+                  <!--<img v-else-if="answerer.indexOf('朝润') > -1" class="full-width-img" src="../assets/other.jpg">-->
+                  <!--<img v-else class="full-width-img" src="../assets/logo.png">-->
+                <!--</div>-->
+                <!--<div class="box"><em></em><span></span>{{ message.text }}</div>-->
+                <!--<div class="clearfix"></div>-->
+              <!--</div>-->
+              <!--<div class="clearfix"></div>-->
+            <!--</div>-->
+          <!--</transition-group>-->
+          <!--<div id="bottom" v-show="!finish"></div>-->
+        <!--</div>-->
+        <!--&lt;!&ndash;一开始输入姓名&ndash;&gt;-->
+        <!--&lt;!&ndash;<div v-if="!started" class="input-box">&ndash;&gt;-->
+        <!--&lt;!&ndash;<input @keyup.enter="sendName" id="name-input" placeholder="请输入姓名" type="text" v-model="answerer">&ndash;&gt;-->
+        <!--&lt;!&ndash;<button :disabled="!this.answerer.length" @click="sendName">发送</button>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+        <!--<div class="input-box">-->
+          <!--<input @keyup.enter="sendMessage" id="text-input" placeholder="消息" type="text" v-model="mText">-->
+          <!--<button :disabled="!this.mText.length" @click="sendMessage">发送消息</button>-->
         <!--</div>-->
 
-        <div class="input-box">
-          <input @keyup.enter="sendMessage" id="text-input" placeholder="消息" type="text" v-model="mText">
-          <button :disabled="!this.mText.length" @click="sendMessage">发送消息</button>
-        </div>
+        <!--&lt;!&ndash;显示对方姓名&ndash;&gt;-->
+        <!--<div v-if="question && !finish && started" class="ask-name">{{ question.name }}</div>-->
+        <!--&lt;!&ndash;底部图片&ndash;&gt;-->
+        <!--&lt;!&ndash;<transition v-on:after-leave="scrollBottom">&ndash;&gt;-->
+        <!--&lt;!&ndash;<img v-if="!finish && started" class="full-width-img bottom-img" src="../assets/is_real.png">&ndash;&gt;-->
+        <!--&lt;!&ndash;</transition>&ndash;&gt;-->
 
-        <!--显示对方姓名-->
-        <div v-if="question && !finish && started" class="ask-name">{{ question.name }}</div>
-        <!--底部图片-->
-        <!--<transition v-on:after-leave="scrollBottom">-->
-        <!--<img v-if="!finish && started" class="full-width-img bottom-img" src="../assets/is_real.png">-->
-        <!--</transition>-->
+        <!--<div class="input-box">-->
+          <!--<button v-if="canSelect && started" class="bottom-btn a-btn" @click="sayABC('A')">总选A</button>-->
+          <!--<button v-if="canSelect && started" class="bottom-btn b-btn" @click="sayABC('B')">牛B</button>-->
+          <!--<button v-if="canSelect && started" class="bottom-btn c-btn" @click="sayABC('C')">都选C</button>-->
+        <!--</div>-->
 
-        <div class="input-box">
-          <button v-if="canSelect && started" class="bottom-btn a-btn" @click="sayABC('A')">总选A</button>
-          <button v-if="canSelect && started" class="bottom-btn b-btn" @click="sayABC('B')">牛B</button>
-          <button v-if="canSelect && started" class="bottom-btn c-btn" @click="sayABC('C')">都选C</button>
-        </div>
-
-      </div>
-    </div>
+      <!--</div>-->
+    <!--</div>-->
   </div>
 
 
