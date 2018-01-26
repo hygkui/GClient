@@ -7,11 +7,10 @@
       </h2>
       <p>开始时间:{{startTime}}</p>
       <p>{{board.aliveCount}}人参与</p>
-      <span v-for="(user, index) in board.userIds">
+      <span v-for="(user, index) in board.userIds" :key="index">
         {{ (index + 1)  + '.' + user }}
       </span>
     </div>
-
 
     <div v-if="board.hasEnd" class="panel">
       共 {{ board.userIds.length }} 人瓜分 {{ board.totalRewardTokens }} 个悦币
@@ -30,15 +29,12 @@
       <p v-if="!userInfo.actionAskRecovery">大侠后会有期~</p>
     </div>
 
-    <div class="panel" v-if="userInfo && userInfo.isAlive">
-
+    <div class="panel" v-if="userInfo && board.question">
       <div v-if="board.question">
-        <p>{{board.question.title}}</p>
-
-        <div v-if="board.question && board.question.choices.length > 2">
-
+        <div v-if="board.question && board.question.choices.length > 1">
+          <p>{{board.question.title}}</p>
           <div v-if="board.showAnalysis">
-            <div>
+            <div v-if="board.question.choices && board.analysis">
               <button v-if="board.question.choices[0]" class="default-choice-btn" :class="{'answer-right-a': board.question.choices[0].isRight, 'answer': !board.question.choices[0].isRight}">{{ board.question.choices[0].text }} {{ getPeopleText(board.analysis[0].count) }}</button>
               <button v-if="board.question.choices[1]" class="default-choice-btn" :class="{'answer-right-b': board.question.choices[1].isRight, 'answer': !board.question.choices[1].isRight}">{{ board.question.choices[1].text }} {{ getPeopleText(board.analysis[1].count) }}</button>
               <button v-if="board.question.choices[2]" class="default-choice-btn" :class="{'answer-right-c': board.question.choices[2].isRight, 'answer': !board.question.choices[2].isRight}">{{ board.question.choices[2].text }} {{ getPeopleText(board.analysis[2].count) }}</button>
@@ -54,41 +50,32 @@
           <div v-else>
             <div v-if="board.stopTime > 0">
               <h3>倒计时：{{ board.stopTime }}</h3>
-              <div v-if="board.question.isMultipleChoice">
-                <span v-if="choices.length > 0">{{ choices }}</span>
-                <button v-if="board.question.choices[0]" class="default-choice-btn" :class="{'choice-a': choices.indexOf(0) !== -1}" @click="toggleChoice(0)">{{ board.question.choices[0].text }}</button>
-                <button v-if="board.question.choices[1]" class="default-choice-btn" :class="{'choice-b': choices.indexOf(1) !== -1}" @click="toggleChoice(1)">{{ board.question.choices[1].text }}</button>
-                <button v-if="board.question.choices[2]" class="default-choice-btn" :class="{'choice-c': choices.indexOf(2) !== -1}" @click="toggleChoice(2)">{{ board.question.choices[2].text }}</button>
-                <button v-if="board.question.choices[3]" class="default-choice-btn" :class="{'choice-d': choices.indexOf(3) !== -1}" @click="toggleChoice(3)">{{ board.question.choices[3].text }}</button>
+              <div v-if="board.question.isMultipleChoice && board.question.choices">
+                <button v-if="board.question.choices[0]" :disabled="!userInfo.isAlive" class="default-choice-btn" :class="{'choice-a': choices.indexOf(0) !== -1}" @click="toggleChoice(0)">{{ board.question.choices[0].text }}</button>
+                <button v-if="board.question.choices[1]" :disabled="!userInfo.isAlive" class="default-choice-btn" :class="{'choice-b': choices.indexOf(1) !== -1}" @click="toggleChoice(1)">{{ board.question.choices[1].text }}</button>
+                <button v-if="board.question.choices[2]" :disabled="!userInfo.isAlive" class="default-choice-btn" :class="{'choice-c': choices.indexOf(2) !== -1}" @click="toggleChoice(2)">{{ board.question.choices[2].text }}</button>
+                <button v-if="board.question.choices[3]" :disabled="!userInfo.isAlive" class="default-choice-btn" :class="{'choice-d': choices.indexOf(3) !== -1}" @click="toggleChoice(3)">{{ board.question.choices[3].text }}</button>
                 <!--<button type="button" class="am-center am-btn am-btn-default am-btn-secondary am-round" @click="submitChoices">-->
                   <!--<span v-if="choices.length > 0">{{ choices }}</span>-->
                   <!--提交-->
                 <!--</button>-->
               </div>
-              <div v-else>
-                <button v-if="board.question.choices[0]" class="default-choice-btn" :class="{'choice-a': tmpChoice === 0}" @click="checkAnswer(0)">{{ board.question.choices[0].text }}</button>
-                <button v-if="board.question.choices[1]" class="default-choice-btn" :class="{'choice-b': tmpChoice === 1}" @click="checkAnswer(1)">{{ board.question.choices[1].text }}</button>
-                <button v-if="board.question.choices[2]" class="default-choice-btn" :class="{'choice-c': tmpChoice === 2}" @click="checkAnswer(2)">{{ board.question.choices[2].text }}</button>
-                <button v-if="board.question.choices[3]" class="default-choice-btn" :class="{'choice-d': tmpChoice === 3}" @click="checkAnswer(3)">{{ board.question.choices[3].text }}</button>
+              <div v-else-if="board.question.choices">
+                <button v-if="board.question.choices[0]" :disabled="!userInfo.isAlive" class="default-choice-btn" :class="{'choice-a': tmpChoice === 0}" @click="checkAnswer(0)">{{ board.question.choices[0].text }}</button>
+                <button v-if="board.question.choices[1]" :disabled="!userInfo.isAlive" class="default-choice-btn" :class="{'choice-b': tmpChoice === 1}" @click="checkAnswer(1)">{{ board.question.choices[1].text }}</button>
+                <button v-if="board.question.choices[2]" :disabled="!userInfo.isAlive" class="default-choice-btn" :class="{'choice-c': tmpChoice === 2}" @click="checkAnswer(2)">{{ board.question.choices[2].text }}</button>
+                <button v-if="board.question.choices[3]" :disabled="!userInfo.isAlive" class="default-choice-btn" :class="{'choice-d': tmpChoice === 3}" @click="checkAnswer(3)">{{ board.question.choices[3].text }}</button>
               </div>
-
-
             </div>
-
           </div>
         </div>
       </div>
-
-
-
-
 
       <div  class="control" v-if="userInfo && !userInfo.isAlive && userInfo.actionAskRecovery">
         <button class="btn btn-active" @click="recovery('yes')">复活</button>
         <button class="btn btn-die" @click="recovery('no')">死吧</button>
       </div>
     </div>
-
 
     <div class="panel" v-if="!userId || !userInfo">
       <input class="am-form-field" type="text" style="display: inline-block; width: 200px;" placeholder="用户名" v-model="userId">
@@ -127,7 +114,9 @@
     },
     methods: {
       checkAnswer (choice) {
-        this.tmpChoice = choice
+        if (this.userInfo.isAlive) {
+          this.tmpChoice = choice
+        }
       },
       sendAnswer () {
         http.post(baseURL + '/api/checkAnswer', {
