@@ -1,38 +1,49 @@
 <template>
   <div>
     <div class="panel">
+        <a class="am-badge am-badge-success am-round">
+          {{board.aliveCount}}人
+        </a>
+        <a class="am-badge am-badge-warning am-round">
+          {{board.totalRewardTokens}}悦币
+        </a>
+      <!--<p>开始时间:{{startTime}}</p>-->
+
+      <!--<span v-for="(user, index) in board.userIds" :key="index">-->
+        <!--{{ (index + 1)  + '.' + user }}-->
+      <!--</span>-->
 
       <h2>
         {{ board.tip }}
       </h2>
-      <p>开始时间:{{startTime}}</p>
-      <p>{{board.aliveCount}}人参与</p>
-      <span v-for="(user, index) in board.userIds" :key="index">
-        {{ (index + 1)  + '.' + user }}
-      </span>
-    </div>
 
-    <div v-if="board.hasEnd" class="panel">
-      共 {{ board.userIds.length }} 人瓜分 {{ board.totalRewardTokens }} 个悦币
+      <div v-if="board.hasEnd">
+        共 {{ board.userIds.length }} 人瓜分 {{ board.totalRewardTokens }} 个悦币
 
-      <p v-if="userInfo && userInfo.isAlive">恭喜您获得 {{ userInfo.gotTokens }} 个悦币！</p>
-      <p v-if="userInfo && !userInfo.isAlive">下次再战，当王者赚悦币！</p>
-    </div>
-
-    <div v-if="userInfo && !userInfo.isAlive"  class="panel">
-      <div v-if="userInfo.actionAskRecovery && !userInfo.hasRecovery">
-        <h3>大侠，你还有一次复活的机会！</h3>
-        <button type="button" class="am-btn am-round am-btn-success" @click="recovery('yes')">我要复活</button>
-        <button type="button" class="am-btn am-round  am-btn-danger"  @click="recovery('no')">后会有期</button>
+        <p v-if="userInfo && userInfo.isAlive">恭喜您获得 {{ userInfo.gotTokens }} 个悦币！</p>
+        <p v-if="userInfo && !userInfo.isAlive">下次再战，当王者赚悦币！</p>
       </div>
-      <p v-if="userInfo.actionAskRecovery && userInfo.hasRecovery">每场只能复活一次哦，大侠后会有期~</p>
-      <p v-if="!userInfo.actionAskRecovery">大侠后会有期~</p>
+
+      <div v-if="userInfo && !userInfo.isAlive">
+        <div v-if="userInfo.actionAskRecovery && !userInfo.hasRecovery">
+          <h3>大侠，你还有一次复活的机会！</h3>
+          <button type="button" class="am-btn am-round am-btn-success" @click="recovery('yes')">我要复活</button>
+          <button type="button" class="am-btn am-round  am-btn-danger"  @click="recovery('no')">后会有期</button>
+        </div>
+        <p v-if="userInfo.actionAskRecovery && userInfo.hasRecovery">每场只能复活一次哦，大侠后会有期~</p>
+        <p v-if="!userInfo.actionAskRecovery">大侠后会有期~</p>
+      </div>
+
     </div>
+
+
 
     <div class="panel" v-if="userInfo && board.question">
       <div v-if="board.question">
         <div v-if="board.question && board.question.choices.length > 1">
-          <p>{{board.question.title}}</p>
+          <blockquote>
+            <p>{{board.question.title}}</p>
+          </blockquote>
           <div v-if="board.showAnalysis">
             <div v-if="board.question.choices && board.analysis">
               <button v-if="board.question.choices[0]" class="default-choice-btn" :class="{'answer-right-a': board.question.choices[0].isRight, 'answer': !board.question.choices[0].isRight}">{{ board.question.choices[0].text }} {{ getPeopleText(board.analysis[0].count) }}</button>
@@ -82,7 +93,11 @@
       <button type="button" class="am-btn am-btn-success" @click="enterGame()">加入游戏</button>
     </div>
     <div class="panel" v-else>
-      <button type="button" class="am-btn am-btn-danger" @click="exitGame()">退出</button>
+      <span>{{ userId }}</span>
+      <button v-if="userInfo.isAlive" type="button" class="am-btn am-btn-danger" @click="exitGame()">
+        退出
+      </button>
+      <span v-if="!userInfo.isAlive">&nbsp;&nbsp;等待下次冲顶</span>
     </div>
   </div>
 </template>
@@ -193,14 +208,10 @@
         if (that.userInfo && (that.userInfo.submitAnswerState === 0) && (that.board.stopTime === 0)) {
           if (that.board.question.isMultipleChoice) {
             that.submitChoices()
+            console.log('sendAnswer for multiple choice question', that.userInfo.submitAnswerState)
           } else {
             that.sendAnswer()
-          }
-          console.log('sendAnswer', new Date())
-        } else {
-          console.log('check state, not ready to send answer', that.board.stopTime)
-          if (that.userInfo) {
-            console.log(that.userInfo.submitAnswerState)
+            console.log('sendAnswer for single choice question', new Date())
           }
         }
       }, 1000)
@@ -297,14 +308,14 @@
     margin: 10px;
     padding: 5px;
     width: 80%;
-    background-color: rgba(128, 128, 128, 0.68);
+    background-color: rgba(128, 128, 128, 0.52);
     color: white;
     font-size: 1em;
     text-align: left;
   }
 
   .choice-a {
-    border: 2px solid #4A90E2;
+    border: 3px solid #4A90E2;
   }
 
   .answer-right-a {
@@ -313,7 +324,7 @@
   }
 
   .choice-b {
-    border: 2px solid #F5A623;
+    border: 3px solid #F5A623;
   }
 
   .answer-right-b {
@@ -327,7 +338,7 @@
   }
 
   .choice-c {
-    border: 2px solid #BD10E0;
+    border: 3px solid #BD10E0;
   }
 
 .answer-right-c {
@@ -336,7 +347,7 @@
 }
 
   .choice-d {
-    border: 2px solid #50E3C2;
+    border: 3px solid #50E3C2;
   }
 
 .answer-right-d {
