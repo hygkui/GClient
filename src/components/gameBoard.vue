@@ -7,11 +7,13 @@
         <a class="am-badge am-badge-warning am-round">
           {{board.totalRewardTokens}}悦币
         </a>
-      <!--<p>开始时间:{{startTime}}</p>-->
+      <p>开始时间:{{startTime}}</p>
 
       <!--<span v-for="(user, index) in board.userIds" :key="index">-->
         <!--{{ (index + 1)  + '.' + user }}-->
       <!--</span>-->
+
+      <p v-if="goodAnswerCount > 0">你答对了{{ goodAnswerCount }}道题目</p>
 
       <h2>
         {{ board.tip }}
@@ -19,6 +21,12 @@
 
       <div v-if="board.hasEnd">
         共 {{ board.userIds.length }} 人瓜分 {{ board.totalRewardTokens }} 个悦币
+
+        <br>
+        <span v-if="board.userIds" v-for="(user, index) in board.userIds" :key="index">
+          {{ (index + 1)  + '.' + user }}
+        </span>
+        <br>
 
         <p v-if="userInfo && userInfo.isAlive">恭喜您获得 {{ userInfo.gotTokens }} 个悦币！</p>
         <p v-if="userInfo && !userInfo.isAlive">下次再战，当王者赚悦币！</p>
@@ -99,6 +107,10 @@
       </button>
       <span v-if="!userInfo.isAlive">&nbsp;&nbsp;等待下次冲顶</span>
     </div>
+    <div style="text-align: center;margin-top: 20px;">
+      <img src="../assets/logo.png" alt="" style="height: 30px;">
+      <span style="font-weight: 700; font-size: 1em;">悦盒冲顶 Beta</span>
+    </div>
   </div>
 </template>
 
@@ -115,14 +127,17 @@
         userId: '',
         userInfo: null,
         choices: [],
-        tmpChoice: -1
+        tmpChoice: -1,
+        goodAnswerCount: 0
       }
     },
     computed: {
       startTime () {
-        let getTime = function (time) {
-          let T = time.split('T')
-          return T[0] + ' ' + T[1].split('.')[0]
+        let getTime = function (b) {
+          let a = new Date(b)
+          // let T = time.split('T')
+          // return T[0] + ' ' + T[1].split('.')[0]
+          return a.toLocaleDateString() + ' ' + a.toLocaleTimeString()
         }
         return this.board ? getTime(this.board.startTime) : 'unknown'
       }
